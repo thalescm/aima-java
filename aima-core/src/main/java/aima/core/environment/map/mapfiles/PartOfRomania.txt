@@ -1,11 +1,46 @@
 Romania
-6
-city1 23 45
-city2 33 45
-city3 43 45
-city4 53 45
-city5 63 45
-city6 73 45
-2
-city1 city 2 14
-city1 city 3 28
+20
+Oradea 380 131
+Zerind 374 125
+Arad 366 117
+Timisoara 329 105
+Lugoj 244 102
+Mehadia 241 92
+Dobreta 242 82
+Sibiu 253 123
+RimnicuVilcea 193 115
+Craiova 160 74
+Fagaras 176 142
+Pitesti 100 116
+Giurgiu 77 25
+Bucharest 0 360
+Neamt 234 181
+Urziceni 80 247
+Iasi 226 202
+Vaslui 199 222
+Hirsova 151 260
+Eforie 161 282
+23
+Oradea Zerind 71
+Oradea Sibiu 151
+Zerind Arad 75
+Arad Sibiu 140
+Arad Timisoara 118
+Timisoara Lugoj 111
+Lugoj Mehadia 70
+Mehadia Dobreta 75
+Dobreta Craiova 120
+Sibiu Fagaras 120
+Sibiu RimnicuVilcea 80
+RimnicuVilcea Pitesti 97
+RimnicuVilcea Craiova 146
+Craiova Pitesti 138
+Fagaras Bucharest 211
+Pitesti Bucharest 101
+Giurgiu Bucharest 90
+Bucharest Urziceni 85
+Neamt Iasi 87
+Urziceni Vaslui 142
+Urziceni Hirsova 98
+Iasi Vaslui 91
+Hirsova Eforie 86

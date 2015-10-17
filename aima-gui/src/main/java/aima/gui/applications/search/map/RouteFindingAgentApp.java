@@ -4,12 +4,14 @@ import java.util.ArrayList;
 
 import aima.core.environment.map.AdaptableHeuristicFunction;
 import aima.core.environment.map.ExtendableMap;
+import aima.core.environment.map.FileMap;
 import aima.core.environment.map.MapAgent;
 import aima.core.environment.map.MapEnvironment;
 import aima.core.environment.map.Scenario;
 import aima.core.environment.map.SimplifiedRoadMapOfAustralia;
 import aima.core.environment.map.SimplifiedRoadMapOfPartOfRomania;
 import aima.core.environment.map.SimplifiedTrainMapOfSaoPaulo;
+import aima.core.environment.map.mapfiles.MapReader;
 import aima.core.util.datastructure.Point2D;
 import aima.gui.framework.AgentAppController;
 import aima.gui.framework.AgentAppEnvironmentView;
@@ -133,7 +135,7 @@ public class RouteFindingAgentApp extends SimpleAgentApp {
 			String agentLoc = null;
 			switch (scenarioIdx) {
 			case 0:
-				SimplifiedRoadMapOfPartOfRomania.initMap(map);
+				new FileMap(map, 0 ,new MapReader());
 				agentLoc = SimplifiedRoadMapOfPartOfRomania.ARAD;
 				break;
 			case 1:

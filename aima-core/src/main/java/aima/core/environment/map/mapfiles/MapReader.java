@@ -5,14 +5,13 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.net.URL;
 import java.security.InvalidParameterException;
-import java.util.IllegalFormatException;
 
 public class MapReader {
 	
 	public interface MapReaderCallback {
 		void onMapName(String mapName);
 		void onNewDistance(String locationName, int distanceToReferencePosition, int bearingDirections);
-		void onDirectionalLink(String originName, String destinyName, int distance);
+		void onDirectionalLink(String originName, String destinyName, double distance);
 	}
 	
 	public static enum Map {
@@ -71,7 +70,8 @@ public class MapReader {
 				} else if (currentLine - 2 == numberOfcities) {
 					numberOfRoutes = Integer.valueOf(sCurrentLine);
 				} else {
-					System.out.println(sCurrentLine);
+					String[] params = sCurrentLine.split(" ");
+					callback.onDirectionalLink(params[0], params[1], Double.valueOf(params[2]));
 					routesCounter++;
 				}
 				
