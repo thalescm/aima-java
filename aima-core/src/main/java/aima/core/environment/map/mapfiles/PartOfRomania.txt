@@ -1,0 +1,11 @@
+Romania
+6
+city1 23 45
+city2 33 45
+city3 43 45
+city4 53 45
+city5 63 45
+city6 73 45
+2
+city1 city 2 14
+city1 city 3 28
