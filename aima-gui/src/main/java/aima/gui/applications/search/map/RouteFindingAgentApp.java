@@ -4,7 +4,6 @@ import java.util.ArrayList;
 
 import aima.core.environment.map.AdaptableHeuristicFunction;
 import aima.core.environment.map.ExtendableMap;
-import aima.core.environment.map.FileMap;
 import aima.core.environment.map.MapAgent;
 import aima.core.environment.map.MapEnvironment;
 import aima.core.environment.map.Scenario;
@@ -12,6 +11,7 @@ import aima.core.environment.map.SimplifiedRoadMapOfAustralia;
 import aima.core.environment.map.SimplifiedRoadMapOfPartOfRomania;
 import aima.core.environment.map.SimplifiedTrainMapOfSaoPaulo;
 import aima.core.environment.map.mapfiles.MapReader;
+import aima.core.environment.map.mapfiles.MapReader.Map;
 import aima.core.util.datastructure.Point2D;
 import aima.gui.framework.AgentAppController;
 import aima.gui.framework.AgentAppEnvironmentView;
@@ -67,7 +67,7 @@ public class RouteFindingAgentApp extends SimpleAgentApp {
 				"to Port Hedland", "to Albany", "to Melbourne",
 				"to Random" };
 		private static String[] SP_TRAIN_DESTS = new String[] {
-				"to Butantã", "to Sé", "to Jabaquara", "to Tucuruvi",
+				"to Paraiso", "to PedroII", "to Santa Cecilia",
 				"to Random" };
 		
 
@@ -79,7 +79,7 @@ public class RouteFindingAgentApp extends SimpleAgentApp {
 					"Romania, from Fagaras",
 					"Australia, from Sydney",
 					"Australia, from Random",
-					"SP_TRAIN, from Vila Madalena",
+					"SP_TRAIN, from Paulista",
 					"SP_TRAIN, from Random"}, 0);
 			setSelectorItems(SEARCH_MODE_SEL, SearchFactory.getInstance()
 					.getSearchModeNames(), 1); // change the default!
@@ -132,18 +132,19 @@ public class RouteFindingAgentApp extends SimpleAgentApp {
 		protected void selectScenarioAndDest(int scenarioIdx, int destIdx) {
 			ExtendableMap map = new ExtendableMap();
 			MapEnvironment env = new MapEnvironment(map);
+			MapReader reader = new MapReader();
 			String agentLoc = null;
 			switch (scenarioIdx) {
 			case 0:
-				new FileMap(map, 0 ,new MapReader());
+				reader.readFile(Map.ROMANIA.ordinal(), map);
 				agentLoc = SimplifiedRoadMapOfPartOfRomania.ARAD;
 				break;
 			case 1:
-				SimplifiedRoadMapOfPartOfRomania.initMap(map);
+				reader.readFile(Map.ROMANIA.ordinal(), map);
 				agentLoc = SimplifiedRoadMapOfPartOfRomania.LUGOJ;
 				break;
 			case 2:
-				SimplifiedRoadMapOfPartOfRomania.initMap(map);
+				reader.readFile(Map.ROMANIA.ordinal(), map);
 				agentLoc = SimplifiedRoadMapOfPartOfRomania.FAGARAS;
 				break;
 			case 3:
@@ -155,11 +156,12 @@ public class RouteFindingAgentApp extends SimpleAgentApp {
 				agentLoc = map.randomlyGenerateDestination();
 				break;
 			case 5:
+				reader.readFile(Map.SP_TRAIN.ordinal(), map);
 				SimplifiedTrainMapOfSaoPaulo.initMap(map);
-				agentLoc = SimplifiedTrainMapOfSaoPaulo.LUGOJ;
+				agentLoc = "Paulista";
 				break;
 			case 6:
-				SimplifiedTrainMapOfSaoPaulo.initMap(map);
+				reader.readFile(Map.SP_TRAIN.ordinal(), map);
 				agentLoc = map.randomlyGenerateDestination();
 				break;
 			}
@@ -182,7 +184,7 @@ public class RouteFindingAgentApp extends SimpleAgentApp {
 					destinations.add(map.randomlyGenerateDestination());
 					break;
 				}
-			} else if (destIdx < 5) {
+			} else if (scenarioIdx < 5) {
 				switch (destIdx) {
 				case 0:
 					destinations.add(SimplifiedRoadMapOfAustralia.PORT_HEDLAND);
@@ -200,13 +202,13 @@ public class RouteFindingAgentApp extends SimpleAgentApp {
 			} else {
 				switch (destIdx) {
 				case 0:
-					destinations.add(SimplifiedTrainMapOfSaoPaulo.BUCHAREST);
+					destinations.add("paraiso");
 					break;
 				case 1:
-					destinations.add(SimplifiedTrainMapOfSaoPaulo.BUCHAREST);
+					destinations.add("PedroII");
 					break;
 				case 2:
-					destinations.add(SimplifiedTrainMapOfSaoPaulo.BUCHAREST);
+					destinations.add("SantaCecilia");
 					break;
 				case 3:
 					destinations.add(map.randomlyGenerateDestination());

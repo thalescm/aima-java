@@ -4,7 +4,8 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.net.URL;
-import java.security.InvalidParameterException;
+
+import aima.core.environment.map.ExtendableMap;
 
 public class MapReader {
 	
@@ -15,7 +16,8 @@ public class MapReader {
 	}
 	
 	public static enum Map {
-		ROMANIA("PartOfRomania.txt");
+		ROMANIA("PartOfRomania.txt"),
+		SP_TRAIN("MetroSP.txt");
 		
 		private final String value;
 		Map(String value) {
@@ -39,10 +41,8 @@ public class MapReader {
 		return Map.values()[position].getName();
 	}
 
-	public void readFile(int position, MapReaderCallback callback) {
-		if (callback == null) {
-			throw new InvalidParameterException();
-		}
+	public void readFile(int position, ExtendableMap map) {
+		map.clear();
 		
 		URL url = getClass().getResource(getNameOfMapFile(position));
 		BufferedReader br = null;
@@ -60,18 +60,18 @@ public class MapReader {
 			while ((sCurrentLine = br.readLine()) != null) {
 				
 				if (currentLine == 0) {
-					callback.onMapName(sCurrentLine);
+//					callback.onMapName(sCurrentLine);
 				} else if (currentLine == 1) {
 					numberOfcities = Integer.valueOf(sCurrentLine);
 				} else if (currentLine - 2 < numberOfcities) {
 					String[] params = sCurrentLine.split(" ");
-					callback.onNewDistance(params[0], Integer.valueOf(params[1]), Integer.valueOf(params[2]));
+					map.setDistAndDirToRefLocation(params[0], Integer.valueOf(params[1]), Integer.valueOf(params[2]));
 					cityCounter++;
 				} else if (currentLine - 2 == numberOfcities) {
 					numberOfRoutes = Integer.valueOf(sCurrentLine);
 				} else {
 					String[] params = sCurrentLine.split(" ");
-					callback.onDirectionalLink(params[0], params[1], Double.valueOf(params[2]));
+					map.addBidirectionalLink(params[0], params[1], Double.valueOf(params[2]));
 					routesCounter++;
 				}
 				

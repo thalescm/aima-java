@@ -1,0 +1,32 @@
+Metro SP
+14
+Se 0 360
+Anhangabau 623 110
+PedroII 787 265
+SaoBento 687 180
+Liberdade 532 20
+Republica 1210 115
+SantaCecilia 2090 113
+Luz 1580 180
+SaoJoaquim 1340 20
+Vergueiro 2130 17
+Paraiso 2800 15
+Brigadeiro 2460 40
+Trianom 2530 60
+Paulista 2930 80
+15
+Se Anhangabau 623
+Se PedroII 787
+Se SaoBento 687
+Se Liberdade 532
+Anhangabau Republica 585
+Republica SantaCecilia 870
+Republica Luz 1280
+SaoBento Luz 916
+Liberdade SaoJoaquim 785
+SaoJoaquim Vergueiro 802 
+Vergueiro Paraiso 697
+Paraiso Brigadeiro 1100
+Brigadeiro Trianom 835
+Trianom Paulista 1210
+Paulista Republica 2310
