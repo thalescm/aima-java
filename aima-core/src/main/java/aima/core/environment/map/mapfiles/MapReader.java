@@ -15,12 +15,12 @@ public class MapReader {
 		void onDirectionalLink(String originName, String destinyName, double distance);
 	}
 	
-	public static enum Map {
+	public static enum Maps {
 		ROMANIA("PartOfRomania.txt"),
 		SP_TRAIN("MetroSP.txt");
 		
 		private final String value;
-		Map(String value) {
+		Maps(String value) {
 			this.value = value;
 		}
 		
@@ -30,7 +30,7 @@ public class MapReader {
 	};
 	
 	public int getNumberOfMaps() {
-		return Map.values().length;
+		return Maps.values().length;
 	}
 	
 	private String getNameOfMapFile(int position) {
@@ -38,12 +38,13 @@ public class MapReader {
 			throw new NullPointerException();
 		}
 		
-		return Map.values()[position].getName();
+		return Maps.values()[position].getName();
 	}
 
-	public void readFile(int position, ExtendableMap map) {
+	public String readFile(int position, ExtendableMap map) {
 		map.clear();
 		
+		String mapName = null;
 		URL url = getClass().getResource(getNameOfMapFile(position));
 		BufferedReader br = null;
 		
@@ -60,7 +61,7 @@ public class MapReader {
 			while ((sCurrentLine = br.readLine()) != null) {
 				
 				if (currentLine == 0) {
-//					callback.onMapName(sCurrentLine);
+					mapName = sCurrentLine;
 				} else if (currentLine == 1) {
 					numberOfcities = Integer.valueOf(sCurrentLine);
 				} else if (currentLine - 2 < numberOfcities) {
@@ -94,6 +95,7 @@ public class MapReader {
 			}
 		}
 
+		return mapName;
 	}
 
 }

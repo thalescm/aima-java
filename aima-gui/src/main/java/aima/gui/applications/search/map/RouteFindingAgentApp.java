@@ -1,6 +1,8 @@
 package aima.gui.applications.search.map;
 
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
 
 import aima.core.environment.map.AdaptableHeuristicFunction;
 import aima.core.environment.map.ExtendableMap;
@@ -11,7 +13,7 @@ import aima.core.environment.map.SimplifiedRoadMapOfAustralia;
 import aima.core.environment.map.SimplifiedRoadMapOfPartOfRomania;
 import aima.core.environment.map.SimplifiedTrainMapOfSaoPaulo;
 import aima.core.environment.map.mapfiles.MapReader;
-import aima.core.environment.map.mapfiles.MapReader.Map;
+import aima.core.environment.map.mapfiles.MapReader.Maps;
 import aima.core.util.datastructure.Point2D;
 import aima.gui.framework.AgentAppController;
 import aima.gui.framework.AgentAppEnvironmentView;
@@ -30,6 +32,11 @@ import aima.gui.framework.SimpleAgentApp;
  * @author Ruediger Lunde
  */
 public class RouteFindingAgentApp extends SimpleAgentApp {
+
+	
+	static ArrayList<ExtendableMap> maps = new ArrayList<ExtendableMap>();
+	static ArrayList<String> locations = new ArrayList<String>();
+	static ArrayList<String> mapDestinations = new ArrayList<String>();
 
 	/** Creates a <code>MapAgentView</code>. */
 	public AgentAppEnvironmentView createEnvironmentView() {
@@ -58,29 +65,26 @@ public class RouteFindingAgentApp extends SimpleAgentApp {
 		public static enum MapType {
 			ROMANIA, AUSTRALIA, SP_TRAIN
 		};
-
-		private MapType usedMap = null;
-		private static String[] ROMANIA_DESTS = new String[] {
-				"to Bucharest", "to Eforie", "to Neamt",
-				"to Random" };
-		private static String[] AUSTRALIA_DESTS = new String[] {
-				"to Port Hedland", "to Albany", "to Melbourne",
-				"to Random" };
-		private static String[] SP_TRAIN_DESTS = new String[] {
-				"to Paraiso", "to PedroII", "to Santa Cecilia",
-				"to Random" };
 		
 
 		/** Creates a new frame. */
 		public RouteFindingAgentFrame() {
+
+			ArrayList<String> selectorStrings = new ArrayList<String>();
+			MapReader reader = new MapReader();
+			
+			for (int i = 0; i < Maps.values().length; i++ ) {
+				ExtendableMap map = new ExtendableMap();
+				String mapName = reader.readFile(i, map);
+				for (String loc : map.getLocations()) {
+					selectorStrings.add(mapName + ", from " + loc);
+					locations.add(loc);
+				}
+				maps.add(map);
+			}
+			
 			setTitle("RFA - the Route Finding Agent");
-			setSelectorItems(SCENARIO_SEL, new String[] {
-					"Romania, from Arad", "Romania, from Lugoj",
-					"Romania, from Fagaras",
-					"Australia, from Sydney",
-					"Australia, from Random",
-					"SP_TRAIN, from Paulista",
-					"SP_TRAIN, from Random"}, 0);
+			setSelectorItems(SCENARIO_SEL, selectorStrings.toArray(), 0);
 			setSelectorItems(SEARCH_MODE_SEL, SearchFactory.getInstance()
 					.getSearchModeNames(), 1); // change the default!
 			setSelectorItems(HEURISTIC_SEL, new String[] { "=0", "SLD" }, 1);
@@ -95,31 +99,27 @@ public class RouteFindingAgentApp extends SimpleAgentApp {
 		protected void selectionChanged(String changedSelector) {
 			SelectionState state = getSelection();
 			int scenarioIdx = state.getIndex(MapAgentFrame.SCENARIO_SEL);
-			RouteFindingAgentFrame.MapType mtype = (scenarioIdx < 3) ? 
-					MapType.ROMANIA
-					: (scenarioIdx < 5 ) ?
-							MapType.AUSTRALIA
-							: MapType.SP_TRAIN;
+			int counter = 0;
 			
-			if (mtype != usedMap) {
-				usedMap = mtype;
-				String[] items = null;
-				switch (mtype) {
-				case ROMANIA:
-					items = ROMANIA_DESTS;
-					break;
-				case AUSTRALIA:
-					items = AUSTRALIA_DESTS;
-					break;
-				case SP_TRAIN:
-					items = SP_TRAIN_DESTS;
-					break;
+			for (ExtendableMap map : maps) {
+				if (scenarioIdx <= counter + map.getLocations().size() - 1) {
+					mapDestinations = getMapDestinations(map);
+					setSelectorItems(DESTINATION_SEL, getMapDestinations(map).toArray(), 0);
+					return;
+				} else {
+					counter +=  map.getLocations().size();
 				}
-				setSelectorItems(DESTINATION_SEL, items, 0);
 			}
 			super.selectionChanged(changedSelector);
 		}
+		
+		ArrayList<String> getMapDestinations(ExtendableMap map) {
+			
+			return new ArrayList<String>(map.getLocations());
+		}
+		
 	}
+	
 
 	/** Controller for a graphical route finding agent application. */
 	protected static class RouteFindingAgentController extends
@@ -132,92 +132,21 @@ public class RouteFindingAgentApp extends SimpleAgentApp {
 		protected void selectScenarioAndDest(int scenarioIdx, int destIdx) {
 			ExtendableMap map = new ExtendableMap();
 			MapEnvironment env = new MapEnvironment(map);
-			MapReader reader = new MapReader();
 			String agentLoc = null;
-			switch (scenarioIdx) {
-			case 0:
-				reader.readFile(Map.ROMANIA.ordinal(), map);
-				agentLoc = SimplifiedRoadMapOfPartOfRomania.ARAD;
-				break;
-			case 1:
-				reader.readFile(Map.ROMANIA.ordinal(), map);
-				agentLoc = SimplifiedRoadMapOfPartOfRomania.LUGOJ;
-				break;
-			case 2:
-				reader.readFile(Map.ROMANIA.ordinal(), map);
-				agentLoc = SimplifiedRoadMapOfPartOfRomania.FAGARAS;
-				break;
-			case 3:
-				SimplifiedRoadMapOfAustralia.initMap(map);
-				agentLoc = SimplifiedRoadMapOfAustralia.SYDNEY;
-				break;
-			case 4:
-				SimplifiedRoadMapOfAustralia.initMap(map);
-				agentLoc = map.randomlyGenerateDestination();
-				break;
-			case 5:
-				reader.readFile(Map.SP_TRAIN.ordinal(), map);
-				SimplifiedTrainMapOfSaoPaulo.initMap(map);
-				agentLoc = "Paulista";
-				break;
-			case 6:
-				reader.readFile(Map.SP_TRAIN.ordinal(), map);
-				agentLoc = map.randomlyGenerateDestination();
-				break;
+			int counter = 0;
+			
+			for (ExtendableMap myMap : maps) {
+				if (scenarioIdx <= counter + map.getLocations().size() - 1) {
+					map = myMap;
+					agentLoc = map.randomlyGenerateDestination();
+					return;
+				} else {
+					counter +=  map.getLocations().size();
+				}
 			}
 			scenario = new Scenario(env, map, agentLoc);
-
 			destinations = new ArrayList<String>();
-			if (scenarioIdx < 3) {
-				switch (destIdx) {
-				case 0:
-					destinations
-							.add(SimplifiedRoadMapOfPartOfRomania.BUCHAREST);
-					break;
-				case 1:
-					destinations.add(SimplifiedRoadMapOfPartOfRomania.EFORIE);
-					break;
-				case 2:
-					destinations.add(SimplifiedRoadMapOfPartOfRomania.NEAMT);
-					break;
-				case 3:
-					destinations.add(map.randomlyGenerateDestination());
-					break;
-				}
-			} else if (scenarioIdx < 5) {
-				switch (destIdx) {
-				case 0:
-					destinations.add(SimplifiedRoadMapOfAustralia.PORT_HEDLAND);
-					break;
-				case 1:
-					destinations.add(SimplifiedRoadMapOfAustralia.ALBANY);
-					break;
-				case 2:
-					destinations.add(SimplifiedRoadMapOfAustralia.MELBOURNE);
-					break;
-				case 3:
-					destinations.add(map.randomlyGenerateDestination());
-					break;
-				}
-			} else {
-				switch (destIdx) {
-				case 0:
-					destinations.add("paraiso");
-					break;
-				case 1:
-					destinations.add("PedroII");
-					break;
-				case 2:
-					destinations.add("SantaCecilia");
-					break;
-				case 3:
-					destinations.add(map.randomlyGenerateDestination());
-					break;
-				case 4:
-					destinations.add(map.randomlyGenerateDestination());
-					break;
-				}
-			}
+			destinations.add(mapDestinations.get(destIdx));
 		}
 
 		/**
