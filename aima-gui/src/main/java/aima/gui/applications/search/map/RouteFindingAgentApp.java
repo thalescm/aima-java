@@ -105,7 +105,7 @@ public class RouteFindingAgentApp extends SimpleAgentApp {
 				if (scenarioIdx <= counter + map.getLocations().size() - 1) {
 					mapDestinations = getMapDestinations(map);
 					setSelectorItems(DESTINATION_SEL, getMapDestinations(map).toArray(), 0);
-					return;
+					break;
 				} else {
 					counter +=  map.getLocations().size();
 				}
@@ -130,23 +130,21 @@ public class RouteFindingAgentApp extends SimpleAgentApp {
 		 */
 		@Override
 		protected void selectScenarioAndDest(int scenarioIdx, int destIdx) {
-			ExtendableMap map = new ExtendableMap();
-			MapEnvironment env = new MapEnvironment(map);
 			String agentLoc = null;
 			int counter = 0;
 			
 			for (ExtendableMap myMap : maps) {
-				if (scenarioIdx <= counter + map.getLocations().size() - 1) {
-					map = myMap;
-					agentLoc = map.randomlyGenerateDestination();
-					return;
+				if (scenarioIdx <= counter + myMap.getLocations().size() - 1) {
+					MapEnvironment env = new MapEnvironment(myMap);
+					agentLoc = myMap.randomlyGenerateDestination();
+					scenario = new Scenario(env, myMap, agentLoc);
+					destinations = new ArrayList<String>();
+					destinations.add(mapDestinations.get(destIdx));
+					break;
 				} else {
-					counter +=  map.getLocations().size();
+					counter +=  myMap.getLocations().size();
 				}
 			}
-			scenario = new Scenario(env, map, agentLoc);
-			destinations = new ArrayList<String>();
-			destinations.add(mapDestinations.get(destIdx));
 		}
 
 		/**
